@@ -3,6 +3,7 @@
 const User = require('../models/users');
 const SessionTracking = require('../models/session_tracking');
 const AppDeployment = require('../models/app_deployments');
+const LlmCost = require('../models/llm_costs');
 
 /**
  * Controller responsible for returning MongoDB collection data.
@@ -77,6 +78,31 @@ class CollectionsController {
       return res.status(500).json({
         status: 'error',
         message: 'Failed to fetch app_deployments data',
+      });
+    }
+  }
+
+  // PUBLIC_INTERFACE
+  /**
+   * Get all documents from "llm_costs".
+   * Returns an array of documents as JSON.
+   *
+   * @param {import('express').Request} req - Express request
+   * @param {import('express').Response} res - Express response
+   * @param {import('express').NextFunction} next - Express next middleware
+   * @returns {Promise<void>}
+   */
+  async getLlmCosts(req, res, next) {
+    try {
+      const items = await LlmCost.find({})
+        .sort({ created_at: -1 })
+        .exec();
+      return res.status(200).json(items);
+    } catch (err) {
+      console.error('[API] Failed to fetch llm_costs:', err.message);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Failed to fetch llm_costs data',
       });
     }
   }

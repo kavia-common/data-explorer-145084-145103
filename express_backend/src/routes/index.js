@@ -225,4 +225,49 @@ router.get(
   collectionsController.getAppDeployments.bind(collectionsController)
 );
 
+/**
+ * @swagger
+ * /api/llm_costs:
+ *   get:
+ *     summary: Get all LLM cost entries
+ *     operationId: getLlmCosts
+ *     tags:
+ *       - Collections
+ *     responses:
+ *       200:
+ *         description: List of llm_costs documents
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id: { type: string, description: Unique identifier }
+ *                   timestamp:
+ *                     type: string
+ *                     format: date-time
+ *                   model: { type: string }
+ *                   user_id: { type: string }
+ *                   tenant_id: { type: string }
+ *                   session_id: { type: string }
+ *                   container_id: { type: string }
+ *                   input_tokens: { type: number }
+ *                   output_tokens: { type: number }
+ *                   total_tokens: { type: number }
+ *                   input_cost: { type: number }
+ *                   output_cost: { type: number }
+ *                   total_cost: { type: number }
+ *                   currency: { type: string }
+ *                   details:
+ *                     type: object
+ *                     additionalProperties: true
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/api/llm_costs',
+  collectionsController.getLlmCosts.bind(collectionsController)
+);
+
 module.exports = router;
