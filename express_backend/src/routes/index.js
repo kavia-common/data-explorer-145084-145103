@@ -37,15 +37,15 @@ router.get('/', healthController.check.bind(healthController));
 
 /**
  * @swagger
- * /api/collection1:
+ * /api/users:
  *   get:
- *     summary: Get all documents from collection1
- *     operationId: getCollection1
+ *     summary: Get all user documents
+ *     operationId: getUsers
  *     tags:
  *       - Collections
  *     responses:
  *       200:
- *         description: List of collection1 documents
+ *         description: List of users documents
  *         content:
  *           application/json:
  *             schema:
@@ -56,32 +56,49 @@ router.get('/', healthController.check.bind(healthController));
  *                   id:
  *                     type: string
  *                     description: Unique identifier
- *                   name:
+ *                   referral_code:
  *                     type: string
- *                   description:
- *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   updatedAt:
- *                     type: string
- *                     format: date-time
+ *                   referral_stats:
+ *                     type: object
+ *                     properties:
+ *                       total_referrals:
+ *                         type: number
+ *                       verified_referrals:
+ *                         type: number
+ *                       last_referral_date:
+ *                         type: string
+ *                         format: date-time
+ *                   referral_history:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         user_id: { type: string }
+ *                         user_email: { type: string }
+ *                         user_name: { type: string }
+ *                         referred_at:
+ *                           type: string
+ *                           format: date-time
+ *                         verified_at:
+ *                           type: string
+ *                           format: date-time
+ *                         status: { type: string }
  *       500:
  *         description: Internal Server Error
  */
-router.get('/api/collection1', collectionsController.getCollection1.bind(collectionsController));
+router.get('/api/users', collectionsController.getUsers.bind(collectionsController));
 
 /**
  * @swagger
- * /api/collection2:
+ * /api/session_tracking:
  *   get:
- *     summary: Get all documents from collection2
- *     operationId: getCollection2
+ *     summary: Get all session tracking documents
+ *     operationId: getSessionTracking
  *     tags:
  *       - Collections
  *     responses:
  *       200:
- *         description: List of collection2 documents
+ *         description: List of session_tracking documents
  *         content:
  *           application/json:
  *             schema:
@@ -89,22 +106,123 @@ router.get('/api/collection1', collectionsController.getCollection1.bind(collect
  *               items:
  *                 type: object
  *                 properties:
- *                   id:
- *                     type: string
- *                     description: Unique identifier
- *                   name:
- *                     type: string
- *                   description:
- *                     type: string
- *                   createdAt:
+ *                   id: { type: string, description: Unique identifier }
+ *                   task_id: { type: string }
+ *                   tenant_id: { type: string }
+ *                   organization_name: { type: string }
+ *                   user_id: { type: string }
+ *                   user_name: { type: string }
+ *                   project_id: { type: string }
+ *                   container_id: { type: string }
+ *                   service_type: { type: string }
+ *                   session_start:
  *                     type: string
  *                     format: date-time
- *                   updatedAt:
+ *                   session_end:
+ *                     type: string
+ *                     format: date-time
+ *                   status: { type: string }
+ *                   total_cost: { type: number }
+ *                   agent_costs:
+ *                     type: object
+ *                     additionalProperties:
+ *                       type: number
+ *                   cost_history:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         timestamp:
+ *                           type: string
+ *                           format: date-time
+ *                         agent_costs:
+ *                           type: object
+ *                           additionalProperties:
+ *                             type: number
+ *                         total_cost:
+ *                           type: number
+ *                   last_updated:
+ *                     type: string
+ *                     format: date-time
+ *                   session_data:
+ *                     type: object
+ *                     properties:
+ *                       llm_model: { type: string }
+ *                       session_name: { type: string }
+ *                       description: { type: string }
+ *                       platform: { type: string }
+ *                       selected_repos:
+ *                         type: object
+ *                         properties:
+ *                           all_repositories: { type: boolean }
+ *                           repositories:
+ *                             type: array
+ *                             items: { type: string }
+ *                   created_at:
  *                     type: string
  *                     format: date-time
  *       500:
  *         description: Internal Server Error
  */
-router.get('/api/collection2', collectionsController.getCollection2.bind(collectionsController));
+router.get(
+  '/api/session_tracking',
+  collectionsController.getSessionTracking.bind(collectionsController)
+);
+
+/**
+ * @swagger
+ * /api/app_deployments:
+ *   get:
+ *     summary: Get all app deployments documents
+ *     operationId: getAppDeployments
+ *     tags:
+ *       - Collections
+ *     responses:
+ *       200:
+ *         description: List of app_deployments documents
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id: { type: string, description: Unique identifier }
+ *                   app_id: { type: string }
+ *                   app_url: { type: string }
+ *                   artifact_path: { type: string }
+ *                   branch_name: { type: string }
+ *                   build_path: { type: string }
+ *                   command: { type: string }
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                   custom_domain: { type: string }
+ *                   deployment_id: { type: string }
+ *                   job_id: { type: string }
+ *                   message: { type: string }
+ *                   project_id: { type: string }
+ *                   project_name: { type: string }
+ *                   root_path: { type: string }
+ *                   status: { type: string }
+ *                   subdomain: { type: string }
+ *                   task_id: { type: string }
+ *                   tenant_id: { type: string }
+ *                   tenant_name: { type: string }
+ *                   updated_at:
+ *                     type: string
+ *                     format: date-time
+ *                   artifact_count: { type: number }
+ *                   domain_status: { type: string }
+ *                   domain_checked_at:
+ *                     type: string
+ *                     format: date-time
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get(
+  '/api/app_deployments',
+  collectionsController.getAppDeployments.bind(collectionsController)
+);
 
 module.exports = router;

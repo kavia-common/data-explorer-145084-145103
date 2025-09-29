@@ -1,7 +1,8 @@
 'use strict';
 
-const Collection1 = require('../models/collection1');
-const Collection2 = require('../models/collection2');
+const User = require('../models/users');
+const SessionTracking = require('../models/session_tracking');
+const AppDeployment = require('../models/app_deployments');
 
 /**
  * Controller responsible for returning MongoDB collection data.
@@ -9,7 +10,7 @@ const Collection2 = require('../models/collection2');
 class CollectionsController {
   // PUBLIC_INTERFACE
   /**
-   * Get all documents from "collection1".
+   * Get all documents from "users".
    * Returns an array of documents as JSON.
    *
    * @param {import('express').Request} req - Express request
@@ -17,24 +18,22 @@ class CollectionsController {
    * @param {import('express').NextFunction} next - Express next middleware
    * @returns {Promise<void>}
    */
-  async getCollection1(req, res, next) {
+  async getUsers(req, res, next) {
     try {
-      // Fetch all docs; rely on toJSON transform to normalize id field
-      const items = await Collection1.find({}).sort({ createdAt: -1 }).exec();
+      const items = await User.find({}).sort({ updatedAt: -1 }).exec();
       return res.status(200).json(items);
     } catch (err) {
-      // Graceful error handling: log and return structured error
-      console.error('[API] Failed to fetch collection1:', err.message);
+      console.error('[API] Failed to fetch users:', err.message);
       return res.status(500).json({
         status: 'error',
-        message: 'Failed to fetch collection1 data',
+        message: 'Failed to fetch users data',
       });
     }
   }
 
   // PUBLIC_INTERFACE
   /**
-   * Get all documents from "collection2".
+   * Get all documents from "session_tracking".
    * Returns an array of documents as JSON.
    *
    * @param {import('express').Request} req - Express request
@@ -42,15 +41,42 @@ class CollectionsController {
    * @param {import('express').NextFunction} next - Express next middleware
    * @returns {Promise<void>}
    */
-  async getCollection2(req, res, next) {
+  async getSessionTracking(req, res, next) {
     try {
-      const items = await Collection2.find({}).sort({ createdAt: -1 }).exec();
+      const items = await SessionTracking.find({})
+        .sort({ created_at: -1 })
+        .exec();
       return res.status(200).json(items);
     } catch (err) {
-      console.error('[API] Failed to fetch collection2:', err.message);
+      console.error('[API] Failed to fetch session_tracking:', err.message);
       return res.status(500).json({
         status: 'error',
-        message: 'Failed to fetch collection2 data',
+        message: 'Failed to fetch session_tracking data',
+      });
+    }
+  }
+
+  // PUBLIC_INTERFACE
+  /**
+   * Get all documents from "app_deployments".
+   * Returns an array of documents as JSON.
+   *
+   * @param {import('express').Request} req - Express request
+   * @param {import('express').Response} res - Express response
+   * @param {import('express').NextFunction} next - Express next middleware
+   * @returns {Promise<void>}
+   */
+  async getAppDeployments(req, res, next) {
+    try {
+      const items = await AppDeployment.find({})
+        .sort({ updated_at: -1 })
+        .exec();
+      return res.status(200).json(items);
+    } catch (err) {
+      console.error('[API] Failed to fetch app_deployments:', err.message);
+      return res.status(500).json({
+        status: 'error',
+        message: 'Failed to fetch app_deployments data',
       });
     }
   }
