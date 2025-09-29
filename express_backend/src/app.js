@@ -13,7 +13,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.set('trust proxy', true);
-app.use('/docs', swaggerUi.serve, (req, res, next) => {
+const buildDynamicSwaggerSpec = (req) => {
   const host = req.get('host');           // may or may not include port
   let protocol = req.protocol;          // http or https
 
@@ -27,7 +27,7 @@ app.use('/docs', swaggerUi.serve, (req, res, next) => {
   const fullHost = needsPort ? `${host}:${actualPort}` : host;
   protocol = req.secure ? 'https' : protocol;
 
-  const dynamicSpec = {
+  return {
     ...swaggerSpec,
     servers: [
       {
@@ -35,7 +35,17 @@ app.use('/docs', swaggerUi.serve, (req, res, next) => {
       },
     ],
   };
+};
+
+app.use('/docs', swaggerUi.serve, (req, res, next) => {
+  const dynamicSpec = buildDynamicSwaggerSpec(req);
   swaggerUi.setup(dynamicSpec)(req, res, next);
+});
+
+app.get('/openapi.json', (req, res) => {
+  const dynamicSpec = buildDynamicSwaggerSpec(req);
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).json(dynamicSpec);
 });
 
 // Parse JSON request body
